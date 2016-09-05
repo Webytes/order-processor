@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,5 +38,18 @@ public class InventoryService {
 
 
         return result;
+    }
+
+    public void decrementInventory(String sku, int qty) {
+        String stmt = "update inventory set qty = qty - ? where sku = ?";
+
+        template.update((connection -> {
+            PreparedStatement ps = connection.prepareStatement(stmt);
+            ps.setInt(1, qty);
+            ps.setString(2, sku);
+
+            return ps;
+        }));
+
     }
 }

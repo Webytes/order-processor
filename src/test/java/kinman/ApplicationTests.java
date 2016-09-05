@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class ApplicationTests {
     @Autowired
     OrderService orderService;
@@ -50,6 +52,10 @@ public class ApplicationTests {
         assertEquals("10.00", orderItem.getPrice().toString());
         assertEquals(3, orderItem.getQty());
         assertEquals("30.00", orderItem.getExtPrice().toString());
+
+        // confirm that inventory was adjusted
+        Map<String, Inventory> inventory = inventoryService.inventoryForSkus(order.getSkus());
+        assertEquals(97, inventory.get("Orange").getQty());
     }
 
     @Test

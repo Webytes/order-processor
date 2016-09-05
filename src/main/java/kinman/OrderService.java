@@ -45,6 +45,10 @@ public class OrderService {
 
             item.setPrice(inventoryForSku.getPrice());
             item.setExtPrice(item.getPrice().multiply(new BigDecimal(item.getQty())));
+
+            // order will be placed, so adjust inventory.
+            // TODO: None of this is particularly thread-safe
+            inventoryService.decrementInventory(item.getSku(), item.getQty());
         }
 
         repo.save(order);
