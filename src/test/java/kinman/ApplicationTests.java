@@ -11,12 +11,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApplicationTests {
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    InventoryService inventoryService;
 
 	@Test
 	public void contextLoads() {
@@ -46,6 +50,56 @@ public class ApplicationTests {
         assertEquals("10.00", orderItem.getPrice().toString());
         assertEquals(3, orderItem.getQty());
         assertEquals("30.00", orderItem.getExtPrice().toString());
+    }
+
+    @Test
+    public void orderInFailedStatusWhenInsufficientInventory() {
+        Order order = new Order();
+
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        OrderItem oranges = new OrderItem();
+        oranges.setSku("Orange");
+        oranges.setQty(101);
+
+        orderItems.add(oranges);
+
+        order.setOrderItems(orderItems);
+
+        Order newOrder = orderService.create(order);
+
+        assertEquals("failed", newOrder.getStatus());
+    }
+
+    @Test
+    public void orderInFailedStatusWhenUnknownSku() {
+        Order order = new Order();
+
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        OrderItem item = new OrderItem();
+        item.setSku("Grapefruit");
+        item.setQty(1);
+
+        orderItems.add(item);
+
+        order.setOrderItems(orderItems);
+
+        Order newOrder = orderService.create(order);
+
+        assertEquals("failed", newOrder.getStatus());
+    }
+
+    @Test
+    public void canCheckInventory() {
+        List<String> skus = new ArrayList<>();
+        skus.add("Orange");
+
+        Map<String, Inventory> result = inventoryService.inventoryForSkus(skus);
+
+        Inventory oranges = result.get("Orange");
+        assertEquals(100, oranges.getQty());
+        assertEquals("10.00", oranges.getPrice().toString());
     }
 
 }

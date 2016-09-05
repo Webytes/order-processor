@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -47,28 +48,14 @@ public class Order {
 
     public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
 
-//    public void addOrderItem(OrderItem orderItem) {
-//        orderItems.add(orderItem);
-//        orderItem.setOrder(this);
-//    }
-//
-//    public void removeOrderItem(OrderItem orderItem) {
-//        orderItems.remove(orderItem);
-//        orderItem.setOrder(null);
-//    }
+    @JsonIgnore
+    public List<String> getSkus() {
+        List<String> skus = new ArrayList<>();
 
-    String cursorValue() {
-        String padded = String.format("%9d", id);
-        return Base64.getEncoder().encodeToString(padded.getBytes());
-    }
-
-    static Long idFromCursor(String cursor) {
-        try {
-            String value = new String(Base64.getDecoder().decode(cursor), "utf-8");
-            return Long.valueOf(value.trim());
-        } catch (UnsupportedEncodingException e) {
-            return 0L;
+        for (OrderItem item : orderItems) {
+            skus.add(item.getSku());
         }
-    }
 
+        return skus;
+    }
 }

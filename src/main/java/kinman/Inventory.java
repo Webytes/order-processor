@@ -4,14 +4,20 @@ import java.math.BigDecimal;
 
 public class Inventory {
 
-    private String name;
+    private String sku;
 
     private BigDecimal price;
 
     private int qty;
 
-    public String getName() {
-        return name;
+    public Inventory(String sku, BigDecimal price, int qty) {
+        this.sku = sku;
+        this.price = price;
+        this.qty = qty;
+    }
+
+    public String getSku() {
+        return sku;
     }
 
     public BigDecimal getPrice() {

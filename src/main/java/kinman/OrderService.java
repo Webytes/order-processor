@@ -1,23 +1,50 @@
 package kinman;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 public class OrderService {
     private OrderRepository repo;
 
-    public OrderService(OrderRepository orderRepository) { this.repo = orderRepository; }
+    private InventoryService inventoryService;
+
+    public OrderService(OrderRepository orderRepository, InventoryService inventoryService) {
+        this.repo = orderRepository;
+        this.inventoryService = inventoryService;
+    }
 
     public Order create(Order order) {
-        // TODO: check availability and set status accordingly
-        String status = "open";
+        List<String> skus = order.getSkus();
 
-        // initialize system-maintained properties
-        order.setStatus(status);
+        order.setStatus("open");
+
+        if (skus.isEmpty()) {
+            // Order must have at least one SKU on it.
+            order.setStatus("failed");
+        }
+
+        // prices
+        Map<String, Inventory> inventoryItems = inventoryService.inventoryForSkus(skus);
+
         for (OrderItem item : order.getOrderItems()) {
-            // TODO: Look up price in InventoryService
-            item.setPrice(new BigDecimal("10.00"));
-            item.setExtPrice(item.getPrice().multiply(new BigDecimal(item.getQty())));
+            Inventory inventoryForSku = inventoryItems.get(item.getSku());
+
             item.setOrder(order);
+
+            // if item isn't in our catalog, fail the order and keep processing
+            if (inventoryForSku == null) {
+                order.setStatus("failed");
+                continue;
+            }
+
+            // if we don't have enough, fail the order but continue processing
+            if (item.getQty() > inventoryForSku.getQty()) {
+                order.setStatus("failed");
+            }
+
+            item.setPrice(inventoryForSku.getPrice());
+            item.setExtPrice(item.getPrice().multiply(new BigDecimal(item.getQty())));
         }
 
         repo.save(order);

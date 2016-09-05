@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS inventory (
-  name  VARCHAR(80)    NOT NULL,
+  sku  VARCHAR(80)    NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
   qty   INTEGER        NOT NULL,
 
-  PRIMARY KEY (name)
+  PRIMARY KEY (sku)
 );
 
 CREATE TABLE IF NOT EXISTS accounts (
