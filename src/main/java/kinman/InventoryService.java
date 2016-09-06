@@ -24,7 +24,11 @@ public class InventoryService {
             return result;
         }
 
-        String query = "select sku, price, qty from inventory where sku in (?) ";
+        StringBuffer inClause = new StringBuffer("?");
+        for (int i = 1; i < skus.size(); i++) {
+            inClause.append(",?");
+        }
+        String query = "select sku, price, qty from inventory where sku in (" + inClause + ")";
 
         template.query(
                 query, skus.toArray(), (rs, rowNum) -> {

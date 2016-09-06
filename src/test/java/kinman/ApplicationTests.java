@@ -117,6 +117,23 @@ public class ApplicationTests {
     }
 
     @Test
+    public void canCheckInventoryMultiple() {
+        List<String> skus = new ArrayList<>();
+        skus.add("Orange");
+        skus.add("Bananas");
+
+        Map<String, Inventory> result = inventoryService.inventoryForSkus(skus);
+
+        Inventory oranges = result.get("Orange");
+        assertEquals(100, oranges.getQty());
+        assertEquals("10.00", oranges.getPrice().toString());
+
+        Inventory bananas = result.get("Bananas");
+        assertEquals(0, bananas.getQty());
+        assertEquals("10.00", bananas.getPrice().toString());
+    }
+
+    @Test
     public void preHandleWorksWhenNoApiKey() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
