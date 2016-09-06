@@ -17,7 +17,7 @@ public class OrderService {
     public Order create(Order order) {
         List<String> skus = order.getSkus();
 
-        order.setStatus("open");
+        order.setStatus("open"); // happy path
 
         if (skus.isEmpty()) {
             // Order must have at least one SKU on it.
@@ -41,14 +41,14 @@ public class OrderService {
             // if we don't have enough, fail the order but continue processing
             if (item.getQty() > inventoryForSku.getQty()) {
                 order.setStatus("failed");
+            } else {
+                item.setPrice(inventoryForSku.getPrice());
+                item.setExtPrice(item.getPrice().multiply(new BigDecimal(item.getQty())));
+
+                // order will be placed, so adjust inventory.
+                // TODO: None of this is particularly thread-safe
+                inventoryService.decrementInventory(item.getSku(), item.getQty());
             }
-
-            item.setPrice(inventoryForSku.getPrice());
-            item.setExtPrice(item.getPrice().multiply(new BigDecimal(item.getQty())));
-
-            // order will be placed, so adjust inventory.
-            // TODO: None of this is particularly thread-safe
-            inventoryService.decrementInventory(item.getSku(), item.getQty());
         }
 
         repo.save(order);
