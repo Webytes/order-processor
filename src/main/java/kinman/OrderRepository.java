@@ -8,5 +8,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Order save(Order order);
 
     List<Order> findByAccount(Account account);
+
+    Order findByAccountIdAndId(long accountId, long id);
 }
 

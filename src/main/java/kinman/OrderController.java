@@ -33,6 +33,20 @@ public class OrderController {
         return results;
     }
 
+    @RequestMapping(value = "/api/v1/orders/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Order> show(HttpServletRequest request, @PathVariable Long id) {
+        Account account = (Account) request.getAttribute("account");
+
+        Order order = orderRepo.findByAccountIdAndId(account.getId(), id);
+
+        HttpStatus status = HttpStatus.OK;
+        if (order == null) {
+            status = HttpStatus.NOT_FOUND;
+        }
+
+        return new ResponseEntity(order, status);
+    }
+
     @RequestMapping(value = "/api/v1/orders", method = RequestMethod.POST)
     public ResponseEntity<?> create(@RequestBody Order input, HttpServletRequest request) {
 
