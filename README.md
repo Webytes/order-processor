@@ -83,6 +83,9 @@ To view the complete order, request expansion of the `orderItems` collection:
 ## All orders are persisted regardless of status.
 Often, an order that cannot be fulfilled is not persisted. I assume that was a requirement here in order to demonstrate filtering ability.
 
+## SKUs are case-sensitive and exact match.
+The product catalog is keyed on the name of the product (e.g, "Orange", "Kiwi", "Bananas"). An order for 1 "kiwi" will be put in a failed status.
+
 ## The application is not thread-safe.
 The inventory checking, order placement, and inventory depletion are separate transactions, thus making it likely that in a high-volume situation, an order could be placed successfully, yet without sufficient inventory to fulfill it. I've allowed the inventory count to go negative: Additional functionality could include an alert when quantities become low.
 
