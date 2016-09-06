@@ -40,17 +40,20 @@ The API is secured by API key. Two keys are provided:
 
 * greengrocer123: API key for account The Green Grocer.
 * producestand456: API key for account The Produce Stand.
- 
+
 The key must be provided in a custom request header named `kinman-api-key`.
 
 ## Available Endpoints
+
+Note: A prototype of API documentation is available on [Apiary.io](http://docs.ordersapi7.apiary.io/#).
+
 ### /api/v1/orders (GET)
 Returns a list of orders this account has placed.
 
 Example:
 `curl -H "kinman-api-key: greengrocer123" http://localhost:8080/api/v1/orders`
 
-The list can also be filtered to return orders in a given status (`open` or `failed`); e.g., 
+The list can also be filtered to return orders in a given status (`open` or `failed`); e.g.,
 
 `curl -H "kinman-api-key: greengrocer123" http://localhost:8080/api/v1/orders?status=open`
 
@@ -78,7 +81,7 @@ To view the complete order, request expansion of the `orderItems` collection:
 # Assumptions and TODOs
 
 ## All orders are persisted regardless of status.
-Often, an order that cannot be fulfilled is not persisted. I assume that was a requirement here in order to demonstrate filtering ability. 
+Often, an order that cannot be fulfilled is not persisted. I assume that was a requirement here in order to demonstrate filtering ability.
 
 ## The application is not thread-safe.
 The inventory checking, order placement, and inventory depletion are separate transactions, thus making it likely that in a high-volume situation, an order could be placed successfully, yet without sufficient inventory to fulfill it. I've allowed the inventory count to go negative: Additional functionality could include an alert when quantities become low.
@@ -87,7 +90,7 @@ The inventory checking, order placement, and inventory depletion are separate tr
 In a production-ready application, I'd use OAuth2 to secure an order processing system, rather than simple, stored-in-plaintext API keys.
 
 ## Order expansion is only a proof of concept (POC).
-Ideally, I'd alter the Order mapping not to retrieve and render OrderItems by default. To demonstrate resource expansion in the Fetch Order request, I've removed the OrderItems from the retrieved Order before rendering the Order when the "expand" query parameter is not present. 
+Ideally, I'd alter the Order mapping not to retrieve and render OrderItems by default. To demonstrate resource expansion in the Fetch Order request, I've removed the OrderItems from the retrieved Order before rendering the Order when the "expand" query parameter is not present.
 
 ## Documentation is sparse.
-In a production-ready application, I'd have more complete API documentation than what is provided in this README. 
+In a production-ready application, I'd have more complete API documentation than what is provided in this README.
