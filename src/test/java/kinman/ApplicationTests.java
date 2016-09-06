@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,9 @@ public class ApplicationTests {
 
     @Autowired
     InventoryService inventoryService;
+
+    @Autowired
+    ApiKeyHandlerInterceptor handlerInterceptor;
 
 	@Test
 	public void contextLoads() {
@@ -106,6 +111,38 @@ public class ApplicationTests {
         Inventory oranges = result.get("Orange");
         assertEquals(100, oranges.getQty());
         assertEquals("10.00", oranges.getPrice().toString());
+    }
+
+    @Test
+    public void preHandleWorksWhenNoApiKey() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // throws 401 when no API key
+        handlerInterceptor.preHandle(request, response, "Unused Handler");
+        assertEquals(401, response.getStatus());
+    }
+
+    @Test
+    public void preHandleWorksWhenBadApiKey() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // success when valid API key
+        request.addHeader("kinman-api-key", "notagoodkey");
+        handlerInterceptor.preHandle(request, response, "Unused Handler");
+        assertEquals(403, response.getStatus());
+    }
+
+    @Test
+    public void preHandleWorksWhenGoodApiKey() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        // success when valid API key
+        request.addHeader("kinman-api-key", "apikey2");
+        handlerInterceptor.preHandle(request, response, "Unused Handler");
+        assertEquals(200, response.getStatus());
     }
 
 }
