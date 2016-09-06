@@ -37,7 +37,14 @@ public class OrderController {
     public ResponseEntity<Order> show(HttpServletRequest request, @PathVariable Long id) {
         Account account = (Account) request.getAttribute("account");
 
+        // TODO: Adjust mapping to allow fetch of order record only (no orderItems)
         Order order = orderRepo.findByAccountIdAndId(account.getId(), id);
+
+        String expand = request.getParameter("expand");
+        if (expand == null || !expand.equalsIgnoreCase("orderitems")) {
+            // ideally, we just wouldn't fetch them in the first place
+            order.setOrderItems(null);
+        }
 
         HttpStatus status = HttpStatus.OK;
         if (order == null) {
