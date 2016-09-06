@@ -15,6 +15,7 @@ public class ApiKeyHandlerInterceptor extends HandlerInterceptorAdapter {
 
     /*
      *  Ensure that there is a valid API key on the request. It must be in a custom header named "kinman-api-key".
+     *  In a production-ready application, I'd use a standard OAuth2 implementation rather than API key + customer header.
      */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String apiKey = request.getHeader("kinman-api-key");
@@ -31,6 +32,7 @@ public class ApiKeyHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
+        // once we've found the account, tie it to the request for use by controllers.
         request.setAttribute("account", account);
         return true;
     }

@@ -25,6 +25,9 @@ public class Application {
     @Bean
     InventoryService inventoryService() { return new InventoryService(dataSource); }
 
+    /*
+     * Configure our webapp with a request interceptor that verifies API keys.
+     */
     public static class WebConfig extends WebMvcConfigurerAdapter {
         @Autowired
         AccountRepository accountRepository;
@@ -42,8 +45,11 @@ public class Application {
 
     @Bean
     CommandLineRunner init(AccountRepository accountRepository) {
-        accountRepository.save(new Account("The Green Grocer", "apikey1"));
-        accountRepository.save(new Account("The Produce Stand", "apikey2"));
+        /*
+         * Seed the system with a couple of client accounts.
+         */
+        accountRepository.save(new Account("The Green Grocer", "greengrocer123"));
+        accountRepository.save(new Account("The Produce Stand", "producestand456"));
         return null;
     }
 

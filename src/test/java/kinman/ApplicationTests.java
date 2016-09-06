@@ -27,9 +27,6 @@ public class ApplicationTests {
     InventoryService inventoryService;
 
     @Autowired
-    AccountRepository accountRepository;
-
-    @Autowired
     ApiKeyHandlerInterceptor handlerInterceptor;
 
 	@Test
@@ -160,7 +157,7 @@ public class ApplicationTests {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         // success when valid API key
-        request.addHeader("kinman-api-key", "apikey2");
+        request.addHeader("kinman-api-key", "greengrocer123");
         handlerInterceptor.preHandle(request, response, "Unused Handler");
         assertEquals(200, response.getStatus());
     }

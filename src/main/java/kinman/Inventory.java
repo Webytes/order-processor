@@ -27,8 +27,4 @@ public class Inventory {
     public int getQty() {
         return qty;
     }
-
-    public void setQty(int qty) {
-        this.qty = qty;
-    }
 }

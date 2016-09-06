@@ -26,7 +26,15 @@ public class OrderController {
         Map<String, Object> results = new HashMap<String, Object>();
 
         Account account = (Account) request.getAttribute("account");
-        List<Order> orders = orderRepo.findByAccount(account);
+
+        List<Order> orders;
+
+        String status = request.getParameter("status");
+        if (status == null) {
+            orders = orderRepo.findByAccount(account);
+        } else {
+            orders = orderRepo.findByAccountAndStatus(account, status);
+        }
 
         results.put("orders", orders);
 
@@ -38,7 +46,11 @@ public class OrderController {
         Account account = (Account) request.getAttribute("account");
 
         // TODO: Adjust mapping to allow fetch of order record only (no orderItems)
-        Order order = orderRepo.findByAccountIdAndId(account.getId(), id);
+        Order order = orderRepo.findByAccountAndId(account, id);
+
+        if (order == null) {
+            return new ResponseEntity<Order>(order, HttpStatus.NOT_FOUND);
+        }
 
         String expand = request.getParameter("expand");
         if (expand == null || !expand.equalsIgnoreCase("orderitems")) {
@@ -46,12 +58,7 @@ public class OrderController {
             order.setOrderItems(null);
         }
 
-        HttpStatus status = HttpStatus.OK;
-        if (order == null) {
-            status = HttpStatus.NOT_FOUND;
-        }
-
-        return new ResponseEntity(order, status);
+        return new ResponseEntity(order, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/v1/orders", method = RequestMethod.POST)

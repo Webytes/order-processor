@@ -9,6 +9,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByAccount(Account account);
 
-    Order findByAccountIdAndId(long accountId, long id);
+    Order findByAccountAndId(Account account, long id);
+
+    List<Order> findByAccountAndStatus(Account account, String status);
 }
 

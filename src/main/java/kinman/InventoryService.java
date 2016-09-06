@@ -17,6 +17,9 @@ public class InventoryService {
         template = new JdbcTemplate(dataSource);
     }
 
+    /*
+     * Convenience method to check inventory for all SKUs on an order, rather than querying one at a time.
+     */
     public Map<String, Inventory> inventoryForSkus(List<String> skus) {
         Map<String, Inventory> result = new HashMap<>();
 
