@@ -25,7 +25,8 @@ public class OrderController {
     public Map<String, Object> index(HttpServletRequest request) {
         Map<String, Object> results = new HashMap<String, Object>();
 
-        List<Order> orders = orderRepo.findAll();
+        Account account = (Account) request.getAttribute("account");
+        List<Order> orders = orderRepo.findByAccount(account);
 
         results.put("orders", orders);
 
@@ -34,6 +35,9 @@ public class OrderController {
 
     @RequestMapping(value = "/api/v1/orders", method = RequestMethod.POST)
     public ResponseEntity<?> create(@RequestBody Order input, HttpServletRequest request) {
+
+        Account account = (Account) request.getAttribute("account");
+        input.setAccount(account);
 
         orderService.create(input);
 

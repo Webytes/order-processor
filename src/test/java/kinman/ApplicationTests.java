@@ -27,6 +27,9 @@ public class ApplicationTests {
     InventoryService inventoryService;
 
     @Autowired
+    AccountRepository accountRepository;
+
+    @Autowired
     ApiKeyHandlerInterceptor handlerInterceptor;
 
 	@Test

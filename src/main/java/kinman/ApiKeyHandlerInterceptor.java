@@ -32,11 +32,14 @@ public class ApiKeyHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-        if (accountRepository.findByApiKey(apiKey) == null) {
+        Account account = accountRepository.findByApiKey(apiKey);
+
+        if (account == null) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return false;
         }
 
+        request.setAttribute("account", account);
         return true;
     }
 

@@ -19,6 +19,10 @@ public class Order {
 
     private String status;
 
+    @JsonIgnore
+    @ManyToOne
+    private Account account;
+
     private Date createdAt = new Date();
 
     @OneToMany(mappedBy = "order", cascade = {CascadeType.ALL})
@@ -35,6 +39,10 @@ public class Order {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public Account getAccount() { return account; }
+
+    public void setAccount(Account account) { this.account = account; }
 
     public Date getCreatedAt() {
         return createdAt;

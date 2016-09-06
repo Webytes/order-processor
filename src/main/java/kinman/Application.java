@@ -17,6 +17,9 @@ public class Application {
     OrderRepository orderRepository;
 
     @Autowired
+    AccountRepository accountRepository;
+
+    @Autowired
     DataSource dataSource;
 
     @Bean
